@@ -7,6 +7,7 @@ Semantic versioning with configurable prefixes/suffixes and branch-name suffixin
 
 ## Command line options
 
+```
   -branch
     	use branch name as suffix. When used with -tags, the version number used as input is the latest tag suffixed with the branch name
   -gitdir value
@@ -29,7 +30,7 @@ Semantic versioning with configurable prefixes/suffixes and branch-name suffixin
     	use latest tag on git repository as version string
   -v value
     	version string to use
-
+```
 # Examples
 
 ## Given/implied version
