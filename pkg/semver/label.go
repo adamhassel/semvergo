@@ -23,15 +23,6 @@ func (id identifiers) String() string {
 	return strings.Join(sl, ".")
 }
 
-type label struct {
-	raw string
-	t   identifiers
-}
-
-func (l label) String() string {
-	return l.raw
-}
-
 func max[T cmp.Ordered](a, b T) T {
 	if a > b {
 		return a
