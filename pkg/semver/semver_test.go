@@ -579,7 +579,91 @@ func TestMax(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := Max(tt.args.v); !reflect.DeepEqual(got, tt.want) {
+			if got := MaxSlice(tt.args.v); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("MaxSlice() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMax1(t *testing.T) {
+	type args struct {
+		a SemVer
+		b SemVer
+	}
+	tests := []struct {
+		name string
+		args args
+		want SemVer
+	}{
+		{
+			name: "major",
+			args: args{
+				a: SemVer{major: 1},
+				b: SemVer{major: 2},
+			},
+			want: SemVer{major: 2},
+		},
+		{
+			name: "major, reversed",
+			args: args{
+				a: SemVer{major: 2},
+				b: SemVer{major: 1},
+			},
+			want: SemVer{major: 2},
+		},
+		{
+			name: "minor",
+			args: args{
+				a: SemVer{minor: 2},
+				b: SemVer{minor: 1},
+			},
+			want: SemVer{minor: 2},
+		},
+		{
+			name: "minor, reversed",
+			args: args{
+				a: SemVer{minor: 2},
+				b: SemVer{minor: 1},
+			},
+			want: SemVer{minor: 2},
+		},
+		{
+			name: "patch",
+			args: args{
+				a: SemVer{patch: 2},
+				b: SemVer{patch: 1},
+			},
+			want: SemVer{patch: 2},
+		},
+		{
+			name: "patch, reversed",
+			args: args{
+				a: SemVer{patch: 2},
+				b: SemVer{patch: 1},
+			},
+			want: SemVer{patch: 2},
+		},
+		{
+			name: "suffix",
+			args: args{
+				a: SemVer{suffix: "blah"},
+				b: SemVer{suffix: "blah1"},
+			},
+			want: SemVer{suffix: "blah1"},
+		},
+		{
+			name: "suffix, empty",
+			args: args{
+				a: SemVer{suffix: ""},
+				b: SemVer{suffix: "foo"},
+			},
+			want: SemVer{suffix: ""},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Max(tt.args.a, tt.args.b); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Max() = %v, want %v", got, tt.want)
 			}
 		})

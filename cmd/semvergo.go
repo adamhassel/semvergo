@@ -132,7 +132,7 @@ func getLatestGitVersion(repo *git.Repository, branch bool, sufsep string) (semv
 		}
 		vs = append(vs, v)
 	}
-	rv := semver.Max(vs)
+	rv := semver.MaxSlice(vs)
 	if branch {
 		rv.Sufsep(sufsep)
 		rv.Suffix(thisbranch)

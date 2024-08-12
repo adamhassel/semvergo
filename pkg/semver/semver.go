@@ -27,34 +27,36 @@ type SemVer struct {
 	sufsep string
 }
 
-// ByVersionDescending sorts versions in descending order. Suffixes are ignored, except a version without a suffix is considered lower than one with
+// ByVersionDescending sorts versions in descending order. Suffixes are parsed according to semver
 type ByVersionDescending []SemVer
 
 func (a ByVersionDescending) Len() int      { return len(a) }
 func (a ByVersionDescending) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByVersionDescending) Less(i, j int) bool {
-	switch {
-	case a[i].major > a[j].major:
-		return true
-	case a[i].minor > a[j].minor:
-		return true
-	case a[i].patch > a[j].patch:
-		return true
-	case a[i].suffix == "" && a[j].suffix != "":
-		return true
-	}
-	return false
-
-	//return a[i].major > a[j].major && a[i].minor > a[j].minor && a[i].patch > a[j].patch && a[i].suffix > a[j].suffix
+	return Max(a[i], a[j]) == a[i]
 }
 
-// Max returns the highest version in a list
-func Max(v []SemVer) SemVer {
+// MaxSlice returns the highest version in a list
+func MaxSlice(v []SemVer) SemVer {
 	if len(v) == 0 {
 		return SemVer{}
 	}
 	sort.Sort(ByVersionDescending(v))
+	fmt.Println(v)
 	return v[0]
+}
+
+func Max(a, b SemVer) SemVer {
+	if a.major > b.major || a.minor > b.minor || a.patch > b.patch {
+		return a
+	}
+	if a.major < b.major || a.minor < b.minor || a.patch < b.patch {
+		return b
+	}
+	if MaxLabel(a.suffix, b.suffix) == a.suffix {
+		return a
+	}
+	return b
 }
 
 // Version returns the semantic version, without any prefixes or suffixes

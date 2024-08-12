@@ -1,5 +1,7 @@
 # semvergo
-Semantic versioning with configurable prefixes/suffixes and branch-name suffixing
+Semantic versioning with configurable prefixes/suffixes (pre-release labels) and branch-name labeling semantics.
+
+This does not fully implement the build metadata/pre-release semantics of the spec. 
 
 ## Installation
 
