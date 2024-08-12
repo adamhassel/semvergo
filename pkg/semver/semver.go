@@ -42,7 +42,6 @@ func MaxSlice(v []SemVer) SemVer {
 		return SemVer{}
 	}
 	sort.Sort(ByVersionDescending(v))
-	fmt.Println(v)
 	return v[0]
 }
 
@@ -61,7 +60,7 @@ func Max(a, b SemVer) SemVer {
 
 // Version returns the semantic version, without any prefixes or suffixes
 func (s SemVer) Version() string {
-	return fmt.Sprintf("%d.%d.%d", s.major, s.minor, +s.patch)
+	return fmt.Sprintf("%d.%d.%d", s.major, s.minor, s.patch)
 }
 
 // PreSuffix returns the prefix and suffix of s
