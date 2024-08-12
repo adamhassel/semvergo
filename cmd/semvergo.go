@@ -7,9 +7,9 @@ import (
 	"os"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 
 	"github.com/adamhassel/semvergo/pkg/flags"
+	git2 "github.com/adamhassel/semvergo/pkg/git"
 	"github.com/adamhassel/semvergo/pkg/semver"
 )
 
@@ -24,7 +24,7 @@ func init() {
 	flag.Var(&prefix, "prefix", "prefix to add to semver string")
 	flag.Var(&suffix, "suffix", "suffix to add to semver string")
 	flag.Var(&prefixSeparator, "prefix-sep", "prefix separator used to separate prefix from  semver string. Used both for parsing and constructing. Default is empty")
-	flag.Var(&suffixSeparator, "suffix-sep", "suffix separator used to separate semver string from suffix. Used both for parsing and constructing. Default is '-'")
+	flag.Var(&suffixSeparator, "suffix-sep", "suffix separator used to separate semver string from suffix. Used both for parsing and constructing. Default is '-'. Changing this breaks the semver standard.")
 
 	flag.Var(&usetags, "tags", "use latest tag on git repository as version string")
 	flag.Var(&usebranch, "branch", "use branch name as suffix. When used with -tags, the version number used as input is the latest tag suffixed with the branch name")
@@ -58,7 +58,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		sv, err = getLatestGitVersion(repo, usebranch.Bool(), suffixSeparator.String())
+		sv, err = git2.LatestsGitVersionTag(repo, usebranch.Bool(), suffixSeparator.String())
 	case version.IsSet() && version.String() != "":
 		var err error
 		sv, err = semver.ParseSeparated(version.String(), prefixSeparator.String(), suffixSeparator.String())
@@ -89,53 +89,4 @@ func main() {
 	}
 
 	fmt.Printf(sv.String())
-}
-
-func currentBranch(repo *git.Repository) string {
-	head, err := repo.Head()
-	if err != nil {
-		log.Fatal(err)
-	}
-	return head.Name().Short()
-}
-
-func branchTags(repo *git.Repository) []string {
-	tags, err := repo.Tags()
-	if err != nil {
-		log.Fatal(err)
-	}
-	var rv []string
-	err = tags.ForEach(func(ref *plumbing.Reference) error {
-		rv = append(rv, ref.Name().Short())
-		return nil
-	})
-	if err != nil {
-		log.Fatal(err)
-	}
-	return rv
-}
-
-// getLatestGitVersion returns the latest version tag from the repository's tags. If `branch` is true, will only look at version tags suffixed with the branch name. sufsep is the suffix separator.
-func getLatestGitVersion(repo *git.Repository, branch bool, sufsep string) (semver.SemVer, error) {
-	tags := branchTags(repo)
-
-	thisbranch := currentBranch(repo)
-	var vs []semver.SemVer
-	for _, tag := range tags {
-		v, err := semver.ParseSeparated(tag, "", sufsep)
-		if err != nil {
-			continue
-		}
-		_, suffix := v.PreSuffix()
-		if branch && suffix != thisbranch {
-			continue
-		}
-		vs = append(vs, v)
-	}
-	rv := semver.MaxSlice(vs)
-	if branch {
-		rv.Sufsep(sufsep)
-		rv.Suffix(thisbranch)
-	}
-	return rv, nil
 }

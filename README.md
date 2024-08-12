@@ -1,6 +1,8 @@
 # semvergo
 Semantic versioning with configurable prefixes/suffixes (pre-release labels) and branch-name labeling semantics.
 
+Implements ordering semantics of semver 2.0
+
 ## Installation
 
     go install github.com/adamhassel/semvergo
