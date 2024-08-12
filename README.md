@@ -1,8 +1,6 @@
 # semvergo
 Semantic versioning with configurable prefixes/suffixes (pre-release labels) and branch-name labeling semantics.
 
-This does not fully implement the build metadata/pre-release semantics of the spec. 
-
 ## Installation
 
     go install github.com/adamhassel/semvergo
@@ -68,7 +66,7 @@ $ semvergo -v v7.0.54-dev -prefix '' -suffix 'daily' -suffix-sep '~~'
 7.0.55~~daily
 ```
 
-## Version from git
+## Version based on (existing) git tags and/or branch names
 
 ```
 # Show current git tags
@@ -86,6 +84,10 @@ Switched to branch 'test'
 # Generate next version number, retaining existing suffixes from latest version
 $ semvergo -tags
 v0.0.20-dev
+
+# Generate next version number, retaining existing suffixes from latest version, remove prefix
+$ semvergo -tags -prefix ''
+0.0.20-dev
 
 # Generate next version using only tags with current branch name as suffix
 $ semvergo -tags -branch
