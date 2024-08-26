@@ -1,7 +1,7 @@
 FROM golang:1.22-alpine AS build
 WORKDIR /build
 COPY . .
-RUN go build -mod=vendor -o semvergo cmd/semvergo.go
+RUN go build -o semvergo cmd/semvergo.go
 
 FROM busybox
 WORKDIR /semvergo
