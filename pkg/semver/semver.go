@@ -30,11 +30,9 @@ type SemVer struct {
 // ByVersionDescending sorts versions in descending order. Suffixes are parsed according to semver
 type ByVersionDescending []SemVer
 
-func (a ByVersionDescending) Len() int      { return len(a) }
-func (a ByVersionDescending) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a ByVersionDescending) Less(i, j int) bool {
-	return Max(a[i], a[j]) == a[i]
-}
+func (a ByVersionDescending) Len() int           { return len(a) }
+func (a ByVersionDescending) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByVersionDescending) Less(i, j int) bool { return Max(a[i], a[j]) == a[i] }
 
 // MaxSlice returns the highest version in a list
 func MaxSlice(v []SemVer) SemVer {
@@ -46,11 +44,22 @@ func MaxSlice(v []SemVer) SemVer {
 }
 
 func Max(a, b SemVer) SemVer {
-	if a.major > b.major || a.minor > b.minor || a.patch > b.patch {
+	if a.major > b.major {
 		return a
 	}
-	if a.major < b.major || a.minor < b.minor || a.patch < b.patch {
+	if a.major < b.major {
 		return b
+	}
+
+	if a.minor > b.minor {
+		return a
+	}
+	if a.minor < b.minor {
+		return b
+	}
+
+	if a.patch > b.patch {
+		return a
 	}
 	if MaxLabel(a.suffix, b.suffix) == a.suffix {
 		return a

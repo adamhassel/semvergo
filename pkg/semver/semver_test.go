@@ -302,6 +302,19 @@ func TestParse(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "std",
+			args: args{
+				s: "v0.0.1",
+			},
+			want: SemVer{
+				major:  0,
+				minor:  0,
+				patch:  1,
+				prefix: "v",
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -619,6 +632,29 @@ func TestMax1(t *testing.T) {
 				b: SemVer{minor: 1},
 			},
 			want: SemVer{minor: 2},
+		},
+		{
+			name: "minor-patch",
+			args: args{
+				b: SemVer{
+					major:  0,
+					minor:  1,
+					patch:  1,
+					prefix: "v",
+				},
+				a: SemVer{
+					major:  0,
+					minor:  0,
+					patch:  98,
+					prefix: "v",
+				},
+			},
+			want: SemVer{
+				major:  0,
+				minor:  1,
+				patch:  1,
+				prefix: "v",
+			},
 		},
 		{
 			name: "minor, reversed",
