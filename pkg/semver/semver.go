@@ -44,8 +44,6 @@ func MaxSlice(v []SemVer) SemVer {
 }
 
 func Max(a, b SemVer) (v SemVer) {
-	fmt.Println("Comparing", a.String(), "and", b.String())
-	defer func() { fmt.Println("Max is", v.String()) }()
 	if a.major > b.major {
 		return a
 	}
@@ -66,7 +64,7 @@ func Max(a, b SemVer) (v SemVer) {
 	if a.patch < b.patch {
 		return b
 	}
-	
+
 	if MaxLabel(a.suffix, b.suffix) == a.suffix {
 		return a
 	}
