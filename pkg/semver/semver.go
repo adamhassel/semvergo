@@ -43,6 +43,15 @@ func MaxSlice(v []SemVer) SemVer {
 	return v[0]
 }
 
+// MinSlice returns the highest version in a list
+func MinSlice(v []SemVer) SemVer {
+	if len(v) == 0 {
+		return SemVer{}
+	}
+	sort.Sort(ByVersionDescending(v))
+	return v[len(v)-1]
+}
+
 func Max(a, b SemVer) (v SemVer) {
 	if a.major > b.major {
 		return a

@@ -13,11 +13,13 @@ import (
 	"github.com/adamhassel/semvergo/pkg/semver"
 )
 
-var incMajor, incMinor, incPatch, usetags, usebranch flags.Bool
+var older, newer, incMajor, incMinor, incPatch, usetags, usebranch flags.Bool
 var version, prefix, suffix, prefixSeparator, suffixSeparator, gitdir flags.String
 
 func init() {
 	flag.Var(&version, "v", "version string to use")
+	flag.Var(&older, "o", "Print oldest of version strings (>=2) given in arguments without incrementing anything.\n Example: 'semvergo -o v1.2.3 v2.3.4 v0.1.2' yields v0.1.2")
+	flag.Var(&newer, "n", "Print newest of version strings (>=2) given in arguments without incrementing anything.\n Example: 'semvergo -n v1.2.3 v2.3.4 v0.1.2' yields v2.3.4")
 	flag.Var(&incMajor, "major", "increment major version")
 	flag.Var(&incMinor, "minor", "increment minor version")
 	flag.Var(&incPatch, "patch", "increment patch version. This is the default if no other increments are set.")
@@ -65,6 +67,12 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	case older.Bool(), newer.Bool():
+		if len(flag.Args()) < 2 {
+			log.Fatal("must provide at least two version strings to compare")
+		}
+		fmt.Printf(CompareVersions(flag.Args(), older.Bool()).String())
+		return
 	}
 
 	if incMajor.IsSet() && incMajor.Bool() {
@@ -89,4 +97,20 @@ func main() {
 	}
 
 	fmt.Printf(sv.String())
+}
+
+func CompareVersions(vs []string, older bool) semver.SemVer {
+	sv := make([]semver.SemVer, 0, len(vs))
+	for _, v := range vs {
+		s, err := semver.Parse(v)
+		if err != nil {
+			log.Printf("error parsing version %q: %v", v, err)
+			continue
+		}
+		sv = append(sv, s)
+	}
+	if older {
+		return semver.MinSlice(sv)
+	}
+	return semver.MaxSlice(sv)
 }
